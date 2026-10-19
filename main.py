@@ -1,8 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import urllib.request
-import urllib.parse
+import requests
 import json
 
 app = FastAPI()
@@ -18,12 +17,13 @@ clientes_ligados = []
 
 def traduzir_texto(texto, origem, destino):
     try:
-        texto_codificado = urllib.parse.quote(texto)
-        url = f"https://api.mymemory.translated.net/get?q={texto_codificado}&langpair={origem}|{destino}"
-        with urllib.request.urlopen(url, timeout=10) as resposta:
-            dados = json.loads(resposta.read().decode('utf-8'))
-            return dados["responseData"]["translatedText"]
-    except:
+        # O requests trata da codificação automaticamente
+        url = f"https://api.mymemory.translated.net/get?q={texto}&langpair={origem}|{destino}"
+        resposta = requests.get(url, timeout=10)
+        dados = resposta.json()
+        return dados["responseData"]["translatedText"]
+    except Exception as e:
+        print(f"Erro na tradução: {e}")
         return "[Erro na tradução]"
 
 @app.websocket("/ws/{nome}/{idioma}")
