@@ -15,10 +15,12 @@ app.add_middleware(
 
 clientes_ligados = []
 
+# E-mail configurado para aumentar o limite de traduções gratuitas
+EMAIL_CONTATO = "BingoMe09@gmail.com" 
+
 def traduzir_texto(texto, origem, destino):
     try:
-        # O requests trata da codificação automaticamente
-        url = f"https://api.mymemory.translated.net/get?q={texto}&langpair={origem}|{destino}"
+        url = f"https://api.mymemory.translated.net/get?q={texto}&langpair={origem}|{destino}&de={EMAIL_CONTATO}"
         resposta = requests.get(url, timeout=10)
         dados = resposta.json()
         return dados["responseData"]["translatedText"]
